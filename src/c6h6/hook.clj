@@ -85,7 +85,6 @@
 (defhandler hook-for-github
   [uid req]
   (let [{headers :headers} req
-        _ (clojure.pprint/pprint req)
         github-event (headers "x-github-event")
         req (if (= (get headers "content-type")
                    "application/json")

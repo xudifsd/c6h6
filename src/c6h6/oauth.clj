@@ -54,9 +54,11 @@
                         uid))]
     (redirect-to-return_url (gen-oauth-url state))))
 
-(defhandler setup-webhook [uid repo-path]
+(defhandler setup-webhook [uid repo_path]
   (let [{:keys [access_token]} (models/get-thirdparties-by-uid uid)
-        resp (http/post (str "https://api.github.com/repos/" repo-path "/hooks")
+        url (str "https://api.github.com/repos/" repo_path "/hooks")
+        _ (log/debug "in setup-webhook url" url)
+        resp (http/post url
                         {:headers {"Authorization" (str "token " access_token)
                                    "Content-Type" "application/json"}
                          :body (json/write-str {:name "web"
