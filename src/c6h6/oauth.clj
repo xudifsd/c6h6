@@ -86,7 +86,7 @@
                            (u/dissoc-if-nil-empty [:refresh_token :expires_in]))
               _ (log/info "thirdparty " thirdparty)]
           (models/create-thirdparties thirdparty)
-          (setup-webhook uid access_code) ; didn't check resp
+          (setup-webhook uid access_token) ; didn't check resp
           (redirect-to-return_url return_url))
         (fail 401 (:error_description auth)))
       (fail 401 (str "using '"
