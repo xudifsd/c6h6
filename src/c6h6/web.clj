@@ -5,7 +5,8 @@
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]])
-  (:require [c6h6.utils :as utils :refer [defhandler response]]))
+  (:require [c6h6.utils :as utils :refer [defhandler response]]
+            [c6h6.oauth :as oauth]))
 
 (defhandler foo [a b]
   (response {:a a :b b} 200))
@@ -13,6 +14,13 @@
 (defroutes app
   (GET "/" [a b]
        foo)
+
+  (GET "/oauth_url" [return_url]
+       oauth/get-oauth-url)
+
+  (GET "/github_oauth/callback" [error code state]
+       oauth/oauth-callback)
+
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
