@@ -41,7 +41,7 @@
                         {:headers {"Content-Type" "application/json"}
                          :body body})]
     (log/debug "in forward-issues opened resp " resp)
-    (success {:msg (str "opened is going to implemented")})))
+    (success {:msg "pused"})))
 
 (defmethod forward-issues "closed"
   [action issue uid]
@@ -60,7 +60,7 @@
                        {:headers {"Content-Type" "application/json"}
                         :body body})]
     (log/debug "in forward-issues opened resp " resp)
-    (success {:msg (str "opened is going to implemented")})))
+    (success {:msg "pused"})))
 
 (defmethod forward-issues :default
   [action issue uid]
@@ -75,6 +75,7 @@
         {sender-name :login sender-url :html_url} sender
         body (format-msg body)
         title (format-msg title 80)]
+    (log/debug "in issues action" action)
     (forward-issues action issue uid)))
 
 (defmethod forward-event :default
