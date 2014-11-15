@@ -31,6 +31,9 @@
   (POST "/github/hook/:uid" []
         hook/hook-for-github)
 
+  (POST "/github/set_hook" [uid repo-path]
+        oauth/setup-webhook)
+
   (GET "/github_oauth/list" []
        oauth/gets-oauth)
 
