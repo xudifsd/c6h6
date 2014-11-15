@@ -1,22 +1,42 @@
 (ns c6h6.models
-  (:require [environ.core :refer [env]]
-            [clojure.java.jdbc :as db]
-            [clojure.tools.logging :as log]))
+  (:use [korma.core]
+        [korma.db :only [defdb postgres]])
+  (:require [environ.core :refer [env]]))
 
-(defonce db-env (env :database-url
-                     "postgres://zqhlmsndpyixet:AjuT3vC6sAVkJt1ymiU_Xklj_c@ec2-54-83-5-151.compute-1.amazonaws.com:5432/db17j2j9m9pus"))
+(defn- convert-db-uri [db-uri]
+  (let [[_ user password host port db] (re-matches #"postgres://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)" db-uri)]
+    {:user user
+     :password password
+     :host host
+     :port (or port 80)
+     :db db
+     }))
+
+(def db-spec (postgres
+               (convert-db-uri
+                 (str
+                   (env :database-url "postgres://zqhlmsndpyixet:AjuT3vC6sAVkJt1ymiU_Xklj_c@ec2-54-83-5-151.compute-1.amazonaws.com:5432/db17j2j9m9pus")
+                   "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))))
+
+(defdb prod (postgres {
+             :host "ec2-54-83-5-151.compute-1.amazonaws.com"
+             :db "db17j2j9m9pus"
+             :user "zqhlmsndpyixet"
+             :port "5432"
+             :password "AjuT3vC6sAVkJt1ymiU_Xklj_c"
+                       }))
+
+(defentity saying
+  (pk :id)
+  (table :saying))
 
 (defn get-saying-by-id [id]
-  (first (db/query db-env
-                   ["select * from sayings where id = ?" id])))
+  (first (select saying
+                 (where {:id id}))))
 
 (defn create-saying [content]
-  (let [{id :GENERATED_KEY :as all}
-        (db/insert! db-env
-                    :sayings {:content content})]
-    (log/debug "in create-saying " all)
+  (let [{id :GENERATED_KEY} (insert saying (values {:content content}))]
     (get-saying-by-id id)))
 
 (defn gets-saying []
-  (db/query db-env
-            ["select * from sayings"]))
+  (select saying))
