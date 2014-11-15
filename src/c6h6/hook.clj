@@ -26,24 +26,48 @@
          (str/trim)))
      ""))) ; ensure length not exceed specified
 
-(defmulti forward-event (fn [event req] event))
+(defmulti forward-event (fn [event req uid] event))
 
 (defmulti forward-issues (fn [action & _] action))
 
 (defmethod forward-issues "opened"
-  [action issue]
-  (success {:msg (str "opened is going to implemented")}))
+  [action issue uid]
+  (let [{issue-url :html_url :keys [title body sender number]} issue
+        body (json/write-str {:resource_id (str number)
+                              :content (str body " " issue-url)
+                              :status "default"})
+        _ (log/debug "body is " body)
+        resp (http/post (str "https://hook2do.herokuapp.com/channel/todos/" uid "/?format=json")
+                        {:headers {"Content-Type" "application/json"}
+                         :body body})]
+    (log/debug "in forward-issues opened resp " resp)
+    (success {:msg (str "opened is going to implemented")})))
 
 (defmethod forward-issues "closed"
-  [action issue]
-  (success {:msg (str "opened is closed to implemented")}))
+  [action issue uid]
+  (let [{issue-url :html_url :keys [title body sender number]} issue
+        body (json/write-str {:content (str body " " issue-url)
+                              :status "archived"})
+        url (str "https://hook2do.herokuapp.com/channel/todos/"
+                 uid
+                 "/"
+                 (str number)
+                 "/?format=json")
+        _ (log/debug "body is " body "\n"
+                     "url" url "\n"
+                     )
+        resp (http/put url
+                       {:headers {"Content-Type" "application/json"}
+                        :body body})]
+    (log/debug "in forward-issues opened resp " resp)
+    (success {:msg (str "opened is going to implemented")})))
 
 (defmethod forward-issues :default
-  [action issue]
+  [action issue uid]
   (success {:msg (str "issue " action " not implemented")}))
 
 (defmethod forward-event "issues"
-  [event req]
+  [event req uid]
   (let [{params :params} req
         {:keys [issue action repository assignee]} params
         {issue-url :html_url :keys [title body sender number]} issue
@@ -51,10 +75,10 @@
         {sender-name :login sender-url :html_url} sender
         body (format-msg body)
         title (format-msg title 80)]
-    (forward-issues action issue)))
+    (forward-issues action issue uid)))
 
 (defmethod forward-event :default
-  [event req]
+  [event req uid]
   (success {:msg (str event " received")}))
 
 (defhandler hook-for-github
@@ -73,4 +97,4 @@
                                       (json/read-str payload-str :key-fn keyword)
                                       (catch Exception e
                                         nil)))))))]
-    (forward-event github-event req)))
+    (forward-event github-event req uid)))
