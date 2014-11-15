@@ -53,7 +53,7 @@
   [action issue uid repository]
   (let [{issue-url :html_url :keys [title body sender number]} issue
         {:keys [full_name]} repository
-        body (json/write-str {:resource_id (gen-resource-id uid issue-url)
+        body (json/write-str {:resource_id (gen-resource-id full_name number)
                               :content (str body " " issue-url)
                               :status "default"})
         _ (log/debug "body is " body)
@@ -72,7 +72,7 @@
         url (str "https://hook2do.herokuapp.com/channel/todos/"
                  uid
                  "/"
-                 (gen-resource-id uid issue-url)
+                 (gen-resource-id full_name number)
                  "/?format=json")
         _ (log/debug "body is " body "\n"
                      "url" url "\n"
