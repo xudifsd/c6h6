@@ -27,8 +27,8 @@
   (GET "/github_oauth/callback" [error code state]
        oauth/oauth-callback)
 
-  (GET "/github/hook/:uid" []
-       not-implemented)
+  (POST "/github/hook/:uid" []
+        not-implemented)
 
   (GET "/github_oauth/list" []
        oauth/gets-oauth)
