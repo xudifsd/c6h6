@@ -26,17 +26,17 @@
              :password "AjuT3vC6sAVkJt1ymiU_Xklj_c"
                        }))
 
-(defentity saying
+(defentity sayings
   (pk :id)
   (table :saying))
 
 (defn get-saying-by-id [id]
-  (first (select saying
+  (first (select sayings
                  (where {:id id}))))
 
 (defn create-saying [content]
-  (let [{id :GENERATED_KEY} (insert saying (values {:content content}))]
+  (let [{id :GENERATED_KEY} (insert sayings (values {:content content}))]
     (get-saying-by-id id)))
 
 (defn gets-saying []
-  (select saying))
+  (select sayings))
