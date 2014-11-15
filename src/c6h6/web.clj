@@ -34,8 +34,8 @@
   (POST "/github/hook/:uid" []
         hook/hook-for-github)
 
-  (PATCH "/github/issue/:uid/:resource_id" [state] ; state could be open or closed
-         hook/update-issue)
+  (PUT "/github/issue/:uid/:resource_id" [state] ; state could be open or closed
+       hook/update-issue)
 
   (GET "/github_oauth/list" []
        oauth/gets-oauth)
