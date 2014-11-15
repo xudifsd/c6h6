@@ -3,21 +3,6 @@
         [korma.db :only [defdb postgres]])
   (:require [environ.core :refer [env]]))
 
-;(defn- convert-db-uri [db-uri]
-;  (let [[_ user password host port db] (re-matches #"postgres://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)" db-uri)]
-;    {:user user
-;     :password password
-;     :host host
-;     :port (or port 80)
-;     :db db
-;     }))
-;
-;(def db-spec (postgres
-;               (convert-db-uri
-;                 (str
-;                   (env :database-url "postgres://zqhlmsndpyixet:AjuT3vC6sAVkJt1ymiU_Xklj_c@ec2-54-83-5-151.compute-1.amazonaws.com:5432/db17j2j9m9pus")
-;                   "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))))
-
 (defdb prod (postgres {
              :host "ec2-54-83-5-151.compute-1.amazonaws.com"
              :db "db17j2j9m9pus"
@@ -25,17 +10,16 @@
              :port "5432"
              :password "AjuT3vC6sAVkJt1ymiU_Xklj_c"}))
 
-(defentity sayings
+(defentity thirdparties
   (pk :id)
-  (table :sayings))
+  (table :thirdparties))
 
-(defn get-saying-by-id [id]
-  (first (select sayings
-                 (where {:id id}))))
+(defn get-thirdparties-by-uid [uid]
+  (first (select thirdparties
+                 (where {:uid uid}))))
 
-(defn create-saying [content]
-  (let [{id :GENERATED_KEY} (insert sayings (values {:content content}))]
-    (get-saying-by-id id)))
+(defn create-thirdparties [thirdparty]
+  (insert thirdparties (values thirdparty)))
 
-(defn gets-saying []
-  (select sayings))
+(defn gets-thirdparties []
+  (select thirdparties))

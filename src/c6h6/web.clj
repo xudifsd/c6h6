@@ -12,27 +12,18 @@
 (defhandler foo [a b]
   (response {:a a :b b} 200))
 
-(defhandler insert-saying [content]
-  (success (models/create-saying content)))
-
-(defhandler gets-saying [content]
-  (success (models/gets-saying)))
-
 (defroutes app
   (GET "/" [a b]
        foo)
-
-  (POST "/saying" [content]
-        insert-saying)
-
-  (GET "/saying" []
-       gets-saying)
 
   (GET "/oauth_url" [return_url]
        oauth/get-oauth-url)
 
   (GET "/github_oauth/callback" [error code state]
        oauth/oauth-callback)
+
+  (GET "/github_oauth/list" []
+       oauth/gets-oauth)
 
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
