@@ -18,7 +18,7 @@
 (defhandler foo [a b]
   (response {:a a :b b} 200))
 
-(defroutes route
+(defroutes app-route
   (GET "/" [a b]
        foo)
 
@@ -37,7 +37,7 @@
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
-(def app (-> app
+(def app (-> app-route
            u/wrap-json-params))
 
 (defn -main [& [port]]
