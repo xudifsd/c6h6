@@ -28,7 +28,7 @@
 
 (defentity sayings
   (pk :id)
-  (table :saying))
+  (table :sayings))
 
 (defn get-saying-by-id [id]
   (first (select sayings
