@@ -5,7 +5,7 @@
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]])
-  (:require [c6h6.utils :as utils :refer [defhandler response success fail]]
+  (:require [c6h6.utils :as u :refer [defhandler response success fail]]
             [c6h6.oauth :as oauth]
             [c6h6.models :as models]
             [c6h6.hook :as hook]))
@@ -18,7 +18,7 @@
 (defhandler foo [a b]
   (response {:a a :b b} 200))
 
-(defroutes app
+(defroutes route
   (GET "/" [a b]
        foo)
 
@@ -36,6 +36,9 @@
 
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
+
+(def app (-> app
+           u/wrap-json-params))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
