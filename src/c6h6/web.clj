@@ -9,6 +9,11 @@
             [c6h6.oauth :as oauth]
             [c6h6.models :as models]))
 
+(defhandler not-implemented []
+  {:status 501
+   :headers {"Content-Type" "text/plain"}
+   :body "not implemented"})
+
 (defhandler foo [a b]
   (response {:a a :b b} 200))
 
@@ -21,6 +26,9 @@
 
   (GET "/github_oauth/callback" [error code state]
        oauth/oauth-callback)
+
+  (GET "/github/hook/:uid" []
+       not-implemented)
 
   (GET "/github_oauth/list" []
        oauth/gets-oauth)

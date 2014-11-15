@@ -54,6 +54,17 @@
                         uid))]
     (gen-oauth-url state)))
 
+(defn setup-webhook [uid access_token]
+  (let [resp (http/post "https://api.github.com/repos/xudifsd/c6h6/hooks"
+                        {:headers {"Authorization" (str "token " access_token)
+                                   "Content-Type" "application/json"}
+                         :body (json/write-str {:name "web"
+                                                :events "*"
+                                                :config {:url (str "http://c6h6.herokuapp.com/github/hook/" uid)
+                                                         :content_type "json"}
+                                                :active true})})]
+    (log/debug "in setup-webhook " resp)))
+
 (defhandler oauth-callback
   [error code state]
   {:pre-check [(every? u/nil-or-empty? [error code]) "missing paramas"]}
@@ -75,6 +86,7 @@
                            (u/dissoc-if-nil-empty [:refresh_token :expires_in]))
               _ (log/info "thirdparty " thirdparty)]
           (models/create-thirdparties thirdparty)
+          (setup-webhook uid access_code) ; didn't check resp
           (redirect-to-return_url return_url))
         (fail 401 (:error_description auth)))
       (fail 401 (str "using '"
@@ -82,5 +94,6 @@
                      "' to get access_code failed")))
     (fail 401 (str "auth failed: " error))))
 
+; for debug usage
 (defhandler gets-oauth []
   (success (models/gets-thirdparties)))
