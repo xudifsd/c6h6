@@ -16,7 +16,7 @@
   (GET "/" [a b]
        foo)
 
-  (GET "/oauth_url" [return_url]
+  (GET "/oauth_url" [return_url uid]
        oauth/get-oauth-url)
 
   (GET "/github_oauth/callback" [error code state]

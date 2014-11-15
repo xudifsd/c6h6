@@ -60,9 +60,9 @@
   (if (u/nil-or-empty? error)
     (if-let [auth (get-auth code)]
       (if-not (:error auth)
-        (let [access_token (get auth "access_token")
-              expires_in (get auth "expires_in")
-              refresh_token (get auth "refresh_token")
+        (let [access_token (get auth :access_token)
+              expires_in (get auth :expires_in)
+              refresh_token (get auth :refresh_token)
               {:keys [return_url uid]} (parse-state state)
               _ (log/debug "result of parse-state\n"
                            "return_url" return_url "\n"
