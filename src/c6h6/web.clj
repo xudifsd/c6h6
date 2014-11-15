@@ -28,11 +28,11 @@
   (GET "/github_oauth/callback" [error code state]
        oauth/oauth-callback)
 
-  (POST "/github/hook/:uid" []
-        hook/hook-for-github)
-
   (POST "/github/set_hook" [uid repo_path]
         oauth/setup-webhook)
+
+  (POST "/github/hook/:uid" []
+        hook/hook-for-github)
 
   (GET "/github_oauth/list" []
        oauth/gets-oauth)
