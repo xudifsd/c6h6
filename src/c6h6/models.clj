@@ -3,28 +3,27 @@
         [korma.db :only [defdb postgres]])
   (:require [environ.core :refer [env]]))
 
-(defn- convert-db-uri [db-uri]
-  (let [[_ user password host port db] (re-matches #"postgres://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)" db-uri)]
-    {:user user
-     :password password
-     :host host
-     :port (or port 80)
-     :db db
-     }))
-
-(def db-spec (postgres
-               (convert-db-uri
-                 (str
-                   (env :database-url "postgres://zqhlmsndpyixet:AjuT3vC6sAVkJt1ymiU_Xklj_c@ec2-54-83-5-151.compute-1.amazonaws.com:5432/db17j2j9m9pus")
-                   "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))))
+;(defn- convert-db-uri [db-uri]
+;  (let [[_ user password host port db] (re-matches #"postgres://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)" db-uri)]
+;    {:user user
+;     :password password
+;     :host host
+;     :port (or port 80)
+;     :db db
+;     }))
+;
+;(def db-spec (postgres
+;               (convert-db-uri
+;                 (str
+;                   (env :database-url "postgres://zqhlmsndpyixet:AjuT3vC6sAVkJt1ymiU_Xklj_c@ec2-54-83-5-151.compute-1.amazonaws.com:5432/db17j2j9m9pus")
+;                   "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))))
 
 (defdb prod (postgres {
              :host "ec2-54-83-5-151.compute-1.amazonaws.com"
              :db "db17j2j9m9pus"
              :user "zqhlmsndpyixet"
              :port "5432"
-             :password "AjuT3vC6sAVkJt1ymiU_Xklj_c"
-                       }))
+             :password "AjuT3vC6sAVkJt1ymiU_Xklj_c"}))
 
 (defentity sayings
   (pk :id)
