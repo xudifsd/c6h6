@@ -30,7 +30,7 @@
   (str repo-url "|" num))
 
 (defn parse-resource-id [resource-id]
-  (let [[repo-url _ num] (str/splite resource-id #"\|")]
+  (let [[repo-url _ num] (str/split resource-id #"\|")]
     (log/debug "in parse-resource-id repo-url" repo-url "\nnum" num)
     [repo-url num]))
 
