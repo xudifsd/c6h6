@@ -7,7 +7,8 @@
             [environ.core :refer [env]])
   (:require [c6h6.utils :as utils :refer [defhandler response success fail]]
             [c6h6.oauth :as oauth]
-            [c6h6.models :as models]))
+            [c6h6.models :as models]
+            [c6h6.hook :as hook]))
 
 (defhandler not-implemented []
   {:status 501
@@ -28,7 +29,7 @@
        oauth/oauth-callback)
 
   (POST "/github/hook/:uid" []
-        not-implemented)
+        hook/hook-for-github)
 
   (GET "/github_oauth/list" []
        oauth/gets-oauth)
