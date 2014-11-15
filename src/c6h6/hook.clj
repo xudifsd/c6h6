@@ -30,16 +30,13 @@
   (str repo-url "|" num))
 
 (defn parse-resource-id [resource-id]
-  (println "in parse-resource-id resource-id " resource-id)
   (let [[repo-url num] (str/split resource-id #"\|")]
-    (log/debug "in parse-resource-id repo-url" repo-url " num" num)
     [repo-url num]))
 
 (defhandler update-issue [uid resource_id state]
   (let [[repo-url num] (parse-resource-id resource_id)
         thirdparty (models/get-thirdparties-by-uid uid)
         url (str "https://api.github.com/repos/" repo-url "/issues/" num)
-        _ (log/debug "in update-issue url" url)
         resp (http/patch url {:headers {"Authorization" (str "token " (:access_token thirdparty))}
                               :body (json/write-str {:state state})})]
     (if (= (:status resp) 200)
@@ -57,11 +54,9 @@
         body (json/write-str {:resource_id (gen-resource-id full_name number)
                               :content (str body " " issue-url)
                               :status "default"})
-        _ (log/debug "body is " body)
         resp (http/post (str "https://hook2do.herokuapp.com/channel/todos/" uid "/?format=json")
                         {:headers {"Content-Type" "application/json"}
                          :body body})]
-    (log/debug "in forward-issues opened resp " resp)
     (success {:msg "pused"})))
 
 (defmethod forward-issues "closed"
@@ -75,13 +70,9 @@
                  "/"
                  (gen-resource-id full_name number)
                  "/?format=json")
-        _ (log/debug "body is " body "\n"
-                     "url" url "\n"
-                     )
         resp (http/put url
                        {:headers {"Content-Type" "application/json"}
                         :body body})]
-    (log/debug "in forward-issues opened resp " resp)
     (success {:msg "pused"})))
 
 (defmethod forward-issues :default
@@ -97,7 +88,6 @@
         {sender-name :login sender-url :html_url} sender
         body (format-msg body)
         title (format-msg title 80)]
-    (log/debug "in issues action" action)
     (forward-issues action issue uid repository)))
 
 (defmethod forward-event :default
