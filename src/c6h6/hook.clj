@@ -31,7 +31,7 @@
 
 (defn parse-resource-id [resource-id]
   (println "in parse-resource-id resource-id " resource-id)
-  (let [[repo-url _ num] (str/split resource-id #"\|")]
+  (let [[repo-url num] (str/split resource-id #"\|")]
     (log/debug "in parse-resource-id repo-url" repo-url " num" num)
     [repo-url num]))
 
