@@ -67,7 +67,7 @@
                                                          :content_type "json"}
                                                 :active true})})]
     (log/debug "in setup-webhook " resp)
-    (if (= (:status resp) 200)
+    (if (= (:status resp) 201)
       (success {:msg "ok"})
       (fail (:status resp) "not ok"))))
 
