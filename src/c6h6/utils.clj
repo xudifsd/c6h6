@@ -1,7 +1,8 @@
 (ns c6h6.utils
   (:require [clojure.tools.logging :as log]
             [clojure.tools.macro :refer [name-with-attributes]]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json])
+  (:import [org.apache.commons.codec.digest DigestUtils]))
 
 (defn response [data & [status]]
   {:status (or status 200)
@@ -147,3 +148,11 @@
             (handler req*))
           (handler req)))
       (handler req))))
+
+(defn md5-sum [^bytes bs]
+  {:tag String}
+  (DigestUtils/md5Hex bs))
+
+(defn md5-str [^String bs]
+  {:tag String}
+  (md5-sum (.getBytes bs)))

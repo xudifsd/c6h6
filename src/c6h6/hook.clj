@@ -26,6 +26,9 @@
          (str/trim)))
      ""))) ; ensure length not exceed specified
 
+(defn gen-resource-id [uid issue-url]
+  (u/md5-str (str uid issue-url)))
+
 (defmulti forward-event (fn [event req uid] event))
 
 (defmulti forward-issues (fn [action & _] action))
@@ -33,7 +36,7 @@
 (defmethod forward-issues "opened"
   [action issue uid]
   (let [{issue-url :html_url :keys [title body sender number]} issue
-        body (json/write-str {:resource_id (str number)
+        body (json/write-str {:resource_id (gen-resource-id uid issue-url)
                               :content (str body " " issue-url)
                               :status "default"})
         _ (log/debug "body is " body)
@@ -51,7 +54,7 @@
         url (str "https://hook2do.herokuapp.com/channel/todos/"
                  uid
                  "/"
-                 (str number)
+                 (gen-resource-id uid issue-url)
                  "/?format=json")
         _ (log/debug "body is " body "\n"
                      "url" url "\n"
