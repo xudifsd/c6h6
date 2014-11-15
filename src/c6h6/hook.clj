@@ -30,8 +30,9 @@
   (str repo-url "|" num))
 
 (defn parse-resource-id [resource-id]
+  (println "in parse-resource-id resource-id " resource-id)
   (let [[repo-url _ num] (str/split resource-id #"\|")]
-    (log/debug "in parse-resource-id repo-url" repo-url "\nnum" num)
+    (log/debug "in parse-resource-id repo-url" repo-url " num" num)
     [repo-url num]))
 
 (defhandler update-issue [uid resource_id state]
