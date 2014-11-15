@@ -10,7 +10,9 @@
                  [log4j "1.2.17"]
                  [org.clojure/tools.logging "0.3.0"]
                  [clj-http "0.9.2"]
-                 [org.clojure/data.json "0.2.5"]]
+                 [org.clojure/data.json "0.2.5"]
+                 [org.clojure/java.jdbc "0.3.5"]
+                 [postgresql "9.1-901-1.jdbc4"]]
   :min-lein-version "2.0.0"
   :plugins [[environ/environ.lein "0.2.1"]]
   :hooks [environ.leiningen.hooks]

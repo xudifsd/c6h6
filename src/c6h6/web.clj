@@ -5,15 +5,28 @@
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]])
-  (:require [c6h6.utils :as utils :refer [defhandler response]]
-            [c6h6.oauth :as oauth]))
+  (:require [c6h6.utils :as utils :refer [defhandler response success fail]]
+            [c6h6.oauth :as oauth]
+            [c6h6.models :as models]))
 
 (defhandler foo [a b]
   (response {:a a :b b} 200))
 
+(defhandler insert-saying [content]
+  (success (models/create-saying content)))
+
+(defhandler gets-saying [content]
+  (success (models/gets-saying)))
+
 (defroutes app
   (GET "/" [a b]
        foo)
+
+  (POST "/saying" [content]
+        insert-saying)
+
+  (GET "/saying" []
+       gets-saying)
 
   (GET "/oauth_url" [return_url]
        oauth/get-oauth-url)
