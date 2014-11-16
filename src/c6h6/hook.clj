@@ -78,6 +78,22 @@
                         :body body})]
     (success {:msg "pused"})))
 
+(defmethod forward-issues "reopened"
+  [action issue uid repository]
+  (let [{issue-url :html_url :keys [title body sender number]} issue
+        {:keys [full_name]} repository
+        body (json/write-str {:content (gen-content title body issue-url)
+                              :status "default"})
+        url (str "https://hook2do.herokuapp.com/channel/todos/"
+                 uid
+                 "/"
+                 (gen-resource-id full_name number)
+                 "/?format=json")
+        resp (http/put url
+                       {:headers {"Content-Type" "application/json"}
+                        :body body})]
+    (success {:msg "reopened pused"})))
+
 (defmethod forward-issues :default
   [action issue uid repository]
   (success {:msg (str "issue " action " not implemented")}))
