@@ -48,7 +48,7 @@
 (defmulti forward-issues (fn [action & _] action))
 
 (defn gen-content [title body url]
-  (format "[github] %s\n%s" title url))
+  (format "[github] (%s) %s" title url))
 
 (defmethod forward-issues "opened"
   [action issue uid repository]
