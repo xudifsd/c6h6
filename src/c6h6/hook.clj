@@ -47,12 +47,15 @@
 
 (defmulti forward-issues (fn [action & _] action))
 
+(defn gen-content [title body url]
+  (format "[github] %s\n%s" title url))
+
 (defmethod forward-issues "opened"
   [action issue uid repository]
   (let [{issue-url :html_url :keys [title body sender number]} issue
         {:keys [full_name]} repository
         body (json/write-str {:resource_id (gen-resource-id full_name number)
-                              :content (str body " " issue-url)
+                              :content (gen-content title body issue-url)
                               :status "default"})
         resp (http/post (str "https://hook2do.herokuapp.com/channel/todos/" uid "/?format=json")
                         {:headers {"Content-Type" "application/json"}
@@ -63,7 +66,7 @@
   [action issue uid repository]
   (let [{issue-url :html_url :keys [title body sender number]} issue
         {:keys [full_name]} repository
-        body (json/write-str {:content (str body " " issue-url)
+        body (json/write-str {:content (gen-content title body issue-url)
                               :status "archived"})
         url (str "https://hook2do.herokuapp.com/channel/todos/"
                  uid
